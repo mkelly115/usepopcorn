@@ -74,6 +74,8 @@ export default function App() {
   );
 }
 
+// Need to clean up <Main> with better spacing and cleaner code
+
 function NavBar({ children }) {
   return (
     <nav className="nav-bar">
