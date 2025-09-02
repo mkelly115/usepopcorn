@@ -223,4 +223,3 @@ function WatchedMovie({ movie }) {
   );
 }
  
-// PROJECT ON HOLD

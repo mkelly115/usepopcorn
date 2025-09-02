@@ -171,7 +171,7 @@ function WatchedSummary({ watched }) {
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(watched.map((movie) => movie.runtime));
 
-  // NEED TO INSERT API HERE
+// API PLACED HERE
 
   return (
     <div className="summary">
