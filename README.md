@@ -1,4 +1,3 @@
 # MINI PROJECT
 
-- Final Touches
-- Put online via Render
+- New Updates and Project incoming
