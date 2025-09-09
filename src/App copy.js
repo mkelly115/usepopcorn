@@ -55,16 +55,21 @@ const KEY = "4cfbdbe0";
 export default function App1() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
-  const query = 'story'
+  const [isLoading, setIsLoading] = useState(false);
+  const query = "story";
 
-useEffect(() => {
-  async function fetchMovies() {
-    const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
-    const data = await res.json();
-    setMovies(data.Search);
-  }
-  fetchMovies();
-}, []);
+  useEffect(() => {
+    async function fetchMovies() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+      );
+      const data = await res.json();
+      setMovies(data.Search);
+      setIsLoading(false);
+    }
+    fetchMovies();
+  }, []);
 
   return (
     <>
@@ -74,9 +79,7 @@ useEffect(() => {
       </NavBar>
 
       <Main>
-        <Box>
-          <MovieList movies={movies} />
-        </Box>
+        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
         <Box>
           <WatchedSummary watched={watched} />
           <WatchedMovieList watched={watched} />
@@ -87,6 +90,10 @@ useEffect(() => {
 }
 
 // Need to clean up <Main> with better spacing and cleaner code
+
+function Loader() {
+  return <p className="loader">Loading...</p>
+}
 
 function NavBar({ children }) {
   return (
@@ -175,7 +182,7 @@ function WatchedSummary({ watched }) {
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(watched.map((movie) => movie.runtime));
 
-// API PLACED HERE
+  // API PLACED HERE
 
   return (
     <div className="summary">
