@@ -70,6 +70,8 @@ export default function App1() {
         if (!res.ok)
           throw new Error("Something went wrong with fetching movies :(");
 
+        // This line is wonky but I can't tell why
+
         const data = await res.json();
         if (data.Response === "false") throw new Error("Movie not found");
         setMovies(data.Search);
