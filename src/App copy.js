@@ -47,6 +47,8 @@ import { useEffect, useState } from "react";
 //   },
 // ];
 
+// Unneeded Code
+
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
