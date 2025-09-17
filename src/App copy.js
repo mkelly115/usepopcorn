@@ -55,16 +55,28 @@ const average = (arr) =>
 const KEY = "4cfbdbe0";
 
 export default function App1() {
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const query = "story";
+  // const tempQuery = "story";
+
+  // useEffect(() => {
+  //   console.log("After Initial Render");
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log("After every Render");
+  // });
+
+  // console.log('During Render')
 
   useEffect(() => {
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        setError('')
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
         );
@@ -72,11 +84,9 @@ export default function App1() {
         if (!res.ok)
           throw new Error("Something went wrong with fetching movies :(");
 
-        // This line is wonky but I can't tell why
-
         const data = await res.json();
         if (data.Response === "false") throw new Error("Movie not found");
-        setMovies(data.Search);
+        setMovies(data.Search || []);
       } catch (err) {
         console.error(err.message);
         setError(err.message);
@@ -85,12 +95,12 @@ export default function App1() {
       }
     }
     fetchMovies();
-  }, []);
+  }, [query]);
 
   return (
     <>
       <NavBar>
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
 
@@ -148,9 +158,7 @@ function NumResults({ movies }) {
   );
 }
 
-function Search() {
-  const [query, setQuery] = useState("");
-
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
