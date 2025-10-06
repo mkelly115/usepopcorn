@@ -51,6 +51,8 @@ export default function App1() {
     }
     fetchMovies();
   }, [query]);
+ 
+// continue here
 
   return (
     <>
