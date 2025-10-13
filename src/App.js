@@ -4,7 +4,7 @@ import StarRating from "./StarRating";
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const KEY = "6795bb78";
+const KEY = process.env.REACT_APP_IMDB_API_KEY
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -33,10 +33,11 @@ export default function App() {
   useEffect(() => {
     async function fetchMovies() {
       try {
+        console.log("API KEY:", process.env.REACT_APP_IMDB_API_KEY);
         setIsLoading(true);
         setError("");
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`
         );
 
         if (!res.ok)
@@ -232,7 +233,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     async function getMovieDetails() {
       setIsLoading(true);
       const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+        `https://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
       );
       const data = await res.json();
       setMovie(data);
@@ -241,10 +242,10 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     getMovieDetails();
   }, [selectedId]);
 
-  useEffect(()=>{
-    if(!title) return;
-    document.title = `Movie | ${title}`
-  },[title])
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+  }, [title]);
 
   return (
     <div className="details">
