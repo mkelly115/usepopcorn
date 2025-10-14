@@ -4,7 +4,7 @@ import StarRating from "./StarRating";
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const KEY = process.env.REACT_APP_IMDB_API_KEY
+const KEY = process.env.REACT_APP_IMDB_API_KEY;
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -31,13 +31,16 @@ export default function App() {
   }
 
   useEffect(() => {
+
+    const controller = new AbortController()
+
     async function fetchMovies() {
       try {
         console.log("API KEY:", process.env.REACT_APP_IMDB_API_KEY);
         setIsLoading(true);
         setError("");
         const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`, {signal: controller.signal}
         );
 
         if (!res.ok)
@@ -46,9 +49,14 @@ export default function App() {
         const data = await res.json();
         if (data.Response === "false") throw new Error("Movie not found");
         setMovies(data.Search || []);
+        setError("")
       } catch (err) {
         console.error(err.message);
-        setError(err.message);
+
+        if(error.name !== "AbortError") {
+          setError(err.message);
+        }
+  
       } finally {
         setIsLoading(false);
       }
@@ -60,6 +68,10 @@ export default function App() {
       return;
     }
     fetchMovies();
+
+    return function(){
+      controller.abort();
+    };
   }, [query]);
 
   return (
@@ -125,7 +137,7 @@ function Logo() {
   return (
     <div className="logo">
       <span role="img">🍿</span>
-      <h1>usePopcorn</h1>
+      <h1>TeFlix - Movie Rating</h1>
     </div>
   );
 }
@@ -245,6 +257,10 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   useEffect(() => {
     if (!title) return;
     document.title = `Movie | ${title}`;
+
+    return function(){
+      document.title ="TeFlix - Movie Rating Central"
+    }
   }, [title]);
 
   return (
