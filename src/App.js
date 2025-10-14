@@ -31,16 +31,15 @@ export default function App() {
   }
 
   useEffect(() => {
-
-    const controller = new AbortController()
+    const controller = new AbortController();
 
     async function fetchMovies() {
       try {
-        console.log("API KEY:", process.env.REACT_APP_IMDB_API_KEY);
         setIsLoading(true);
         setError("");
         const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`, {signal: controller.signal}
+          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          { signal: controller.signal }
         );
 
         if (!res.ok)
@@ -49,14 +48,13 @@ export default function App() {
         const data = await res.json();
         if (data.Response === "false") throw new Error("Movie not found");
         setMovies(data.Search || []);
-        setError("")
+        setError("");
       } catch (err) {
         console.error(err.message);
 
-        if(error.name !== "AbortError") {
+        if (error.name !== "AbortError") {
           setError(err.message);
         }
-  
       } finally {
         setIsLoading(false);
       }
@@ -67,9 +65,11 @@ export default function App() {
       setError("");
       return;
     }
+
+    handleCloseMovie();
     fetchMovies();
 
-    return function(){
+    return function () {
       controller.abort();
     };
   }, [query]);
@@ -241,6 +241,23 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onCloseMovie();
   }
 
+  function callback(e) {
+    if (e.code === "Escape") {
+      onCloseMovie();
+    }
+  }
+
+  useEffect(
+    function () {
+      document.addEventListener("keydown", callback);
+
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie]
+  );
+
   useEffect(() => {
     async function getMovieDetails() {
       setIsLoading(true);
@@ -258,9 +275,9 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     if (!title) return;
     document.title = `Movie | ${title}`;
 
-    return function(){
-      document.title ="TeFlix - Movie Rating Central"
-    }
+    return function () {
+      document.title = "TeFlix - Movie Rating Central";
+    };
   }, [title]);
 
   return (
