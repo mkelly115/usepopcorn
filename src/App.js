@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StarRating from "./StarRating";
 
 const average = (arr) =>
@@ -161,11 +161,28 @@ function NumResults({ movies }) {
 }
 
 function Search({ query, setQuery }) {
+  // useEffect(()=>{
+  //   const el = document.querySelector('.search');
+  //   el.focus();
+  // },[])
 
-  useEffect(()=>{
-    const el = document.querySelector('.search');
-    el.focus();
-  },[])
+  const inputElement = useRef(null);
+
+  useEffect(() => {
+    function callback(e) {
+
+      if(document.activeElement === inputElement.current)
+        return;
+
+      if (e.code === "Enter") {
+        inputElement.current.focus();
+        setQuery('');
+      }
+    }
+
+    document.addEventListener("keydown", callback);
+    return () => document.removeEventListener("keydown", callback);
+  }, [setQuery]);
 
   return (
     <input
@@ -174,6 +191,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputElement}
     />
   );
 }
