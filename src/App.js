@@ -286,6 +286,8 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     }
   }
 
+  // NEW USEEFFECT HERE
+
   useEffect(
     function () {
       document.addEventListener("keydown", callback);
