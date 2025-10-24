@@ -16,11 +16,6 @@ export default function App() {
 
   const [watched, setWatched] = useLocalStorageState([], "watched");
 
-  // const [watched, setWatched] = useState(() => {
-  //   const storedValue = localStorage.getItem("watched");
-  //   return JSON.parse(storedValue);
-  // });
-
   function handleSelectMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
   }
@@ -31,17 +26,11 @@ export default function App() {
 
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
-
-    // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
-
-  // useEffect(() => {
-  //   localStorage.setItem("watched", JSON.stringify(watched));
-  // }, [watched]);
 
   return (
     <>
@@ -120,11 +109,6 @@ function NumResults({ movies }) {
 }
 
 function Search({ query, setQuery }) {
-  // useEffect(()=>{
-  //   const el = document.querySelector('.search');
-  //   el.focus();
-  // },[])
-
   const inputElement = useRef(null);
 
   useKey("Enter", function () {
@@ -133,23 +117,6 @@ function Search({ query, setQuery }) {
     inputElement.current.focus();
     setQuery("");
   });
-
-  // useEffect(() => {
-  //   function callback(e) {
-  //     if (document.activeElement === inputElement.current) return;
-
-  //     if (e.code === "Enter") {
-
-  //       if (document.activeElement === inputElement.current) return;
-
-  //       inputElement.current.focus();
-  //       setQuery("");
-  //     }
-  //   }
-
-  //   document.addEventListener("keydown", callback);
-  //   return () => document.removeEventListener("keydown", callback);
-  // }, [setQuery]);
 
   return (
     <input
@@ -248,22 +215,6 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onAddWatched(newWatchedMovie);
     onCloseMovie();
   }
-
-  // useEffect(
-  //   function () {
-  //     function callback(e) {
-  //       if (e.code === "Escape") {
-  //         onCloseMovie();
-  //       }
-  //     }
-  //     document.addEventListener("keydown", callback);
-
-  //     return function () {
-  //       document.removeEventListener("keydown", callback);
-  //     };
-  //   },
-  //   [onCloseMovie]
-  // );
 
   useKey("Escape", onCloseMovie);
 
