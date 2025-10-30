@@ -9,6 +9,9 @@ const average = (arr) =>
 
 const KEY = process.env.REACT_APP_IMDB_API_KEY;
 
+// NEED TO IMPLIMENT DEBOUNCING ON THIS
+// REMOVE PLUS AND MINUS ON BOXES
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
@@ -248,7 +251,14 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
         <>
           <header>
             <button className="btn-back" onClick={onCloseMovie}>
-              &larr;
+              <svg width="24" height="24" viewBox="0 0 24 24" style={{ marginRight: '2px'}}>
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                />
+              </svg>
             </button>
             <img src={poster} alt={`Poster of ${movie} movie`} />
             <div className="details-overview">
