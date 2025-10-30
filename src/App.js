@@ -129,6 +129,7 @@ function Search({ query, setQuery }) {
       value={query}
       onChange={(e) => setQuery(e.target.value)}
       ref={inputElement}
+      aria-label="Search Bar for Movies"
     />
   );
 }
