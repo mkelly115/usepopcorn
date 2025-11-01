@@ -9,8 +9,8 @@ const average = (arr) =>
 
 const KEY = process.env.REACT_APP_IMDB_API_KEY;
 
-// NEED TO IMPLIMENT DEBOUNCING ON THIS
 // REMOVE PLUS AND MINUS ON BOXES
+
 
 export default function App() {
   const [query, setQuery] = useState("");

@@ -1,24 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const KEY = process.env.REACT_APP_IMDB_API_KEY;
 
-export function useMovies(query) {
+export function useMovies(query, { debounceMs = 500 } = {}) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  const timerRef = useRef(null);
+  const lastRequestId = useRef(0);
 
-    // callback?.();
+  useEffect(() => {
+    if (!query || query.length < 3) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+      setMovies([]);
+      setError("");
+      setIsLoading(false);
+      return;
+    }
+
+    clearTimeout(timerRef.current);
 
     const controller = new AbortController();
 
-    async function fetchMovies() {
+    timerRef.current = setTimeout(async () => {
+      const requestId = ++lastRequestId.current;
+      setIsLoading(true);
+      setError("");
+
       try {
-        setIsLoading(true);
-        setError("");
         const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          `https://www.omdbapi.com/?apikey=${KEY}&s=${encodeURIComponent(
+            query
+          )}`,
           { signal: controller.signal }
         );
 
@@ -26,34 +41,32 @@ export function useMovies(query) {
           throw new Error("Something went wrong with fetching movies :(");
 
         const data = await res.json();
-        if (data.Response === "false") throw new Error("Movie not found");
-        setMovies(data.Search || []);
-        setError("");
-      } catch (err) {
-        console.error(err.message);
 
+        if (data.Response === "false")
+          throw new Error(data.Error || "Movie not found");
+
+        if (requestId === lastRequestId.current) {
+          setMovies(data.Search || []);
+          setError("");
+        }
+      } catch (err) {
         if (err.name !== "AbortError") {
-          setError(err.message);
+          if (requestId === lastRequestId.current) {
+            setError(err.message || "Unknown error");
+            setMovies([]);
+          }
         }
       } finally {
-        setIsLoading(false);
+        if (requestId === lastRequestId.current) setIsLoading(false);
       }
-    }
+    }, debounceMs);
 
-    if (query.length < 3) {
-      setMovies([]);
-      setError("");
-      return;
-    }
-
-    // handleCloseMovie();
-    fetchMovies();
-
-    return function () {
+    return () => {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
       controller.abort();
     };
-  }, [query]
-);
+  }, [query, debounceMs]);
 
-    return {movies, isLoading, error}
+  return { movies, isLoading, error };
 }
